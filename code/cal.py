@@ -56,7 +56,7 @@ criterion = nn.CrossEntropyLoss()
 
 
 
-def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature):
+def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature, val_dir=''):
     
     net1 = torch.load("../models/{}.pth".format(nnName))
     optimizer1 = optim.SGD(net1.parameters(), lr = 0, momentum = 0)
@@ -79,6 +79,16 @@ def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature):
     if dataName == "Gaussian":
         d.testGaussian(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
         m.metric(nnName, dataName)
+
+    if dataName == "Custom":
+        data_transform = transforms.Compose([
+                                    transforms.Resize(size = (224, 224)),
+                                    transforms.Grayscale(num_output_channels=3),
+                                    transforms.ToTensor(),
+                                    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
+        ds = torchvision.datasets.ImageFolder(val_dir, transform=data_transform)
+
+        return torch.utils.data.DataLoader(ds, batch_size=1, shuffle=False, num_workers=2)
 
     elif dataName == "Uniform":
         d.testUni(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
