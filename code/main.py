@@ -44,6 +44,8 @@ parser.add_argument('--temperature', default=1000, type=int,
                     help='temperature scaling')
 parser.add_argument('--gpu', default = 0, type = int,
 		    help='gpu index')
+parser.add_argument('--val_dir', default = '', type = str,
+		    help='validation directory')
 parser.set_defaults(argument=True)
 
 
@@ -78,7 +80,7 @@ parser.set_defaults(argument=True)
 def main():
     global args
     args = parser.parse_args()
-    c.test(args.nn, args.out_dataset, args.gpu, args.magnitude, args.temperature)
+    c.test(args.nn, args.out_dataset, args.gpu, args.magnitude, args.temperature, args.val_dir)
 
 if __name__ == '__main__':
     main()
