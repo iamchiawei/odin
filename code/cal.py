@@ -76,10 +76,6 @@ def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature, val_dir=''):
 	    testloaderIn = torch.utils.data.DataLoader(testset, batch_size=1,
                                          shuffle=False, num_workers=2)
     
-    if dataName == "Gaussian":
-        d.testGaussian(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
-        m.metric(nnName, dataName)
-
     if dataName == "Custom":
         data_transform = transforms.Compose([
                                     transforms.Resize(size = (224, 224)),
@@ -88,7 +84,11 @@ def test(nnName, dataName, CUDA_DEVICE, epsilon, temperature, val_dir=''):
                                     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])])
         ds = torchvision.datasets.ImageFolder(val_dir, transform=data_transform)
 
-        return torch.utils.data.DataLoader(ds, batch_size=1, shuffle=False, num_workers=2)
+        testloaderIn = torch.utils.data.DataLoader(ds, batch_size=1, shuffle=False, num_workers=2)
+
+    if dataName == "Gaussian":
+        d.testGaussian(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
+        m.metric(nnName, dataName)
 
     elif dataName == "Uniform":
         d.testUni(net1, criterion, CUDA_DEVICE, testloaderIn, testloaderIn, nnName, dataName, epsilon, temperature)
